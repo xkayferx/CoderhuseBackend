@@ -1,42 +1,41 @@
 const express = require('express');
-import Contenedor from './contenedor.js';
+const fs = require('fs')
+const Contenedor = require('./contenedor.js')
 const app = express();
 const PORT= 8080;
+const listaProductos = new Contenedor('productos');
 
 const routeProductos = express.Router();
 routeProductos.use(express.json());
 routeProductos.use(express.urlencoded({extended : true}));
+app.use(express.static('public'))
 app.use('/api/productos', routeProductos)
 
 routeProductos.get('/',(req, res) =>{
-    const listaProductos = new Contenedor('productos');
-    listaProductos.getAll().then(consignaA => res.send(consignaA))
+    listaProductos.getAll().then(consignaA => res.json(consignaA))
 })
 
 routeProductos.get('/:id',(req, res) =>{
     let id = req.params
-    const listaProductos = new Contenedor('productos');
-    listaProductos.getById(id).then(consignaB => res.send(consignaB))
+    listaProductos.getById(id).then(consignaB => res.json(consignaB))
 })
 
 routeProductos.post('/',(req, res) =>{
-    let producto = req.body
-    const listaProductos = new Contenedor('productos');
-    listaProductos.save(producto).then(consignaC => res.send(consignaC))
+    console.log(req.body);
+    let producto = req.body;
+    listaProductos.save(producto).then(consignaC => res.json(consignaC))
 })
 
 routeProductos.put('/:id',(req, res) =>{
     let id = req.params
     let producto = req.body;
     producto.id = id
-    const listaProductos = new Contenedor('productos');
-    listaProductos.update(producto).then(consignaD => res.send(consignaD))
+    listaProductos.update(producto).then(consignaD => res.json(consignaD))
 })
 
 routeProductos.delete('/:id',(req, res) =>{
     let id = req.params
-    const listaProductos = new Contenedor('productos');
-    listaProductos.deleteById(id).then(consignaE => res.send(consignaE))
+    listaProductos.deleteById(id).then(consignaE => res.json(consignaE))
 })
 
 const server = app.listen(PORT, () => {
